@@ -1,136 +1,127 @@
-# Global Agent Rules
+# dotfiles-opencode — Agent Rules
 
-Globalny plik instrukcji. Stosuje się do każdej sesji OpenCode.
-Reguły projektowe w AGENTS.md w katalogu projektu mają wyższy priorytet.
-
----
-
-## Język
-
-- Rozmowa, wyjaśnienia, pytania do mnie: **po polsku**
-- Kod, komentarze, nazwy zmiennych, commity, PR descriptions: **po angielsku**
-- Jeśli zacznę po angielsku — odpowiadaj po angielsku
+Repozytorium globalnej konfiguracji OpenCode dla jednego developera.
+Zawiera skille, agentów i globalne preferencje stosowane do każdej sesji.
 
 ---
 
-## Styl odpowiedzi
+## Kontekst i decyzje projektowe
 
-- Krótko i konkretnie. Nie powtarzaj tego co właśnie zrobiłeś długim opisem.
-- Jeśli zrobiłeś kilka rzeczy — wypunktuj je jednym zdaniem każda.
-- Nie pisz wstępów w stylu "Oczywiście, chętnie pomogę...".
-- Jeśli czegoś nie wiesz — powiedz wprost, nie zgaduj.
-- Jeśli zadanie jest niejednoznaczne — zadaj jedno precyzyjne pytanie, nie listę.
+### Filozofia tego repo
+
+To repo istnieje żeby setup OpenCode był odtwarzalny na każdej maszynie
+przez jedno polecenie (`./install.sh`). Zmiany tu mają efekt globalny —
+dotyczą każdej sesji w każdym projekcie.
+
+### Podział: globalne vs per-projekt
+
+Globalne (tu) = dotyczy Ciebie jako developera, niezależnie od projektu:
+- Styl komunikacji z agentem
+- Format commitów
+- Stack technologiczny jako domyślny
+- Agenci których używasz wszędzie (reviewer, knowledge pipeline)
+
+Per-projekt (w `.opencode/` danego repo) = specyfika konkretnej aplikacji:
+- Schematy danych, wzorce kodu
+- Komendy uruchomieniowe
+- Konwencje specyficzne dla projektu
+
+### Zasada nazewnictwa skilli
+
+Prefiksy odróżniają źródło skilla:
+- `mine-*` — własne skille z tego repo (symlinkowane)
+- bez prefiksu w `~/.config/opencode/skills/` — zainstalowane przez `npx skills add`
+
+### Dlaczego nie używamy oh-my-opencode
+
+Świadoma decyzja z czasu projektowania: oh-my-opencode (teraz oh-my-openagent)
+to plugin od jednej osoby, budowany w real-time, niestabilny. Natywny system
+skills + agents OpenCode jest wystarczający dla projektu solo. Można wrócić
+do tej decyzji gdy projekt flight-tracker urośnie do 10+ równoległych zadań.
+
+### Agenci w tym repo
+
+Wszystkie 4 agenty są subagentami (nie primary). Wywołuje się je przez `@nazwa`.
+
+`reviewer` — model haiku (tani), temperature 0.1 (deterministyczny), write: false.
+Celowo tani bo code review nie wymaga frontier model — wymaga dokładności.
+
+`knowledge-collector` — model haiku, temperature 0.2. Najważniejsza zasada:
+tylko ekstrakcja faktów, zero interpretacji. Niska temperatura = nie wymyśla.
+
+`knowledge-connector` — model sonnet, temperature 0.7. Jedyny agent który może
+spekulować (oznacza hipotezy jako "> Hipoteza:"). Sonnet bo połączenia między
+konceptami wymagają więcej rozumowania niż prosta ekstrakcja.
+
+`idea-generator` — model sonnet, temperature 1.1. Celowo wysoka temperatura —
+ma być zaskakujący. Każdy pomysł musi mieć zakorzenienie w connections/.
+
+---
+
+## Stack technologiczny (domyślny)
+
+- **Backend:** Python 3.12+ (FastAPI, SQLAlchemy, Pydantic, pytest) lub Node.js/TypeScript
+- **Frontend:** React + TypeScript, Vite
+- **Bazy danych:** PostgreSQL (prod), SQLite (dev/testy)
+- **Infrastruktura:** Docker + docker-compose, Kubernetes przez k3d
+- **Środowisko:** WSL2 / Ubuntu na Windows 11 Home
+- **IDE:** IntelliJ IDEA (Kotlin/Java), VS Code (reszta)
+- **Wersje runtime:** nvm (Node), pyenv (Python), SDKMAN (Java/Kotlin)
+- **Sekrety:** KeePassXC — nigdy nie hardcode'uj credentials
+
+---
+
+## Preferencje komunikacji
+
+- Odpowiedzi po **polsku**, kod i komentarze po **angielsku**
+- Krótko i konkretnie — bez wstępów i podsumowań
+- Jeśli czegoś nie wiesz — powiedz wprost
+- Jeśli zadanie niejednoznaczne — jedno precyzyjne pytanie
 
 ---
 
 ## Autonomia przy zmianach
 
-**Małe zmiany** (rób bez pytania):
-- Pojedynczy plik, < ~50 linii diff
-- Dodanie jednej funkcji / metody
-- Poprawka buga w izolowanym miejscu
-- Dodanie testów do istniejącej logiki
+**Małe zmiany** (rób bez pytania): pojedynczy plik, < ~50 linii diff,
+dodanie jednej funkcji, poprawka buga w izolowanym miejscu.
 
-**Duże zmiany** (zapytaj najpierw, przedstaw plan):
-- Refactoring obejmujący wiele plików
-- Zmiana interfejsu / sygnatury publicznej funkcji
-- Zmiana schematu bazy danych
-- Nowy moduł / serwis / warstwa
-- Wszystko co mogłoby złamać istniejące testy
-
-Przy dużych zmianach: opisz co chcesz zrobić i dlaczego, poczekaj na akceptację.
+**Duże zmiany** (przedstaw plan, poczekaj na akceptację): refactoring
+wielu plików, zmiana publicznego interfejsu, nowy moduł, zmiana schematu DB.
 
 ---
 
-## Stack technologiczny
-
-### Backend
-- **Python 3.12+** — FastAPI, SQLAlchemy, Pydantic, pytest
-- **Node.js / TypeScript** — Express lub Fastify, Zod
-- **Java / Kotlin** — Spring Boot, Gradle (edytor: IntelliJ IDEA)
-
-### Frontend
-- Angular, React + TypeScript, Vite
-
-### Bazy danych
-- PostgreSQL (produkcja), H2 albo SQLite (development / testy)
-- Migracje przez Alembic (Python) lub Flyway (Java)
-
-### Infrastruktura
-- Docker + docker-compose (lokalne dev)
-- Kubernetes przez k3d (lokalne testy k8s)
-- WSL2 / Ubuntu na Windows 11 Home
-
-### Narzędzia
-- Zarządzanie wersjami: nvm (Node), pyenv (Python), SDKMAN (Java/Kotlin)
-- Sekrety: KeePassXC (nie hardcode'uj nigdy żadnych credentials)
-
----
-
-## Commity
-
-Format Conventional Commits — zawsze:
+## Conventional Commits
 
 ```
-<type>(<scope>): <short description> (#issue)
-
-Types: feat | fix | chore | docs | refactor | test | perf | ci
+<type>(<scope>): <imperative description> (#issue)
+feat | fix | chore | docs | refactor | test | perf | ci
 ```
 
-Przykłady:
-```
-feat(scraper): add Ryanair adapter with rate limiting (#12)
-fix(scheduler): handle APScheduler timezone edge case (#18)
-test(scraper): add unit tests for 429 retry logic (#12)
-refactor(models): extract BaseAdapter interface (#20)
-```
-
-Zasady:
-- Opis w trybie rozkazującym ("add", nie "added" / "adds")
-- Scope = moduł / katalog którego dotyczy
-- Zawsze referencja do Issue jeśli istnieje
-- Jeden commit = jedna logiczna zmiana, nie mieszaj typów
+- Opis w trybie rozkazującym ("add", nie "added")
+- Scope = moduł / katalog
+- Referencja do Issue jeśli istnieje
+- Jeden commit = jedna logiczna zmiana
+- **Nigdy squash** — historia jest cenna
+- WIP commity przed PR rebase'uj przez `git rebase -i`
 
 ---
 
 ## Testy
 
-- **Zawsze proponuj testy** przy każdej nowej funkcji lub bugfixie
-- Dla Pythona: pytest, fixtures zamiast duplikacji setup
-- Dla Node/TS: Vitest lub Jest
-- Struktura testu: Arrange / Act / Assert (z komentarzem jeśli nieoczywiste)
-- Testy jednostkowe dla logiki biznesowej, integracyjne dla I/O
-- Mockuj zewnętrzne API — testy nie powinny robić prawdziwych requestów HTTP
-
----
-
-## Decyzje architektoniczne
-
-Kiedy wybierasz między kilkoma podejściami — wyjaśnij krótko:
-- Co wybierasz i dlaczego
-- Jakie było główne odrzucone alternatywy i czemu je odrzuciłeś
-- Jakie są trade-offy
-
-Przykład dobrego wyjaśnienia:
-> "Używam adapter pattern zamiast dziedziczenia — łatwiej mockować w testach
-> i dodać nową linię bez zmiany istniejących klas. Alternatywa (subklasy)
-> byłaby prostsza na start, ale utrudniłaby testowanie."
-
-Nie wyjaśniaj oczywistych decyzji.
+Zawsze proponuj testy przy nowej funkcji lub bugfixie.
+Pytest dla Pythona, fixtures zamiast duplikacji setup.
+Testy nie robią prawdziwych requestów HTTP — mockuj zewnętrzne API.
 
 ---
 
 ## Bezpieczeństwo
 
-Ostrzegaj aktywnie gdy widzisz:
-- Credentials / tokeny / klucze API w kodzie lub logach
-- SQL budowany przez konkatenację stringów (→ SQL injection)
-- Input od użytkownika przekazywany bezpośrednio do shell / eval
-- Brak walidacji danych wejściowych na API endpoints
-- Zależności z known vulnerabilities (zasugeruj sprawdzenie)
-- Secrets w plikach które mogą trafić do repo (.env bez .gitignore)
-
-Format ostrzeżenia: krótko, na początku odpowiedzi, z etykietą `⚠ SECURITY:`.
+Ostrzegaj aktywnie (etykieta `⚠ SECURITY:`) gdy widzisz:
+- Credentials / tokeny w kodzie lub logach
+- SQL przez konkatenację stringów
+- Input od użytkownika do shell / eval
+- Brak walidacji na API endpoints
+- Sekrety w plikach które mogą trafić do repo
 
 ---
 
@@ -138,6 +129,36 @@ Format ostrzeżenia: krótko, na początku odpowiedzi, z etykietą `⚠ SECURITY
 
 - Nie zmieniaj formattera / lintera bez pytania
 - Nie instaluj nowych zależności bez pytania
-- Nie usuwaj TODO/FIXME — zamiast tego zapytaj co z nimi zrobić
-- Nie commituj zmian w plikach konfiguracyjnych IDE (.idea/, .vscode/)
-- Nie dodawaj `print()` / `console.log()` do debugowania — używaj loggera
+- Nie usuwaj TODO/FIXME — zapytaj co z nimi zrobić
+- Nie commituj plików IDE (.idea/, .vscode/)
+- Nie używaj print() / console.log() do debugowania — używaj loggera
+
+---
+
+## Jak rozwijać to repo
+
+### Dodanie nowego własnego skilla
+
+```bash
+mkdir skills/mine-nowy-skill
+# napisz skills/mine-nowy-skill/SKILL.md z frontmatter name + description
+./install.sh  # zlinkuje nowy skill
+```
+
+### Dodanie zewnętrznego skilla
+
+```bash
+echo "nazwa-skilla" >> external-skills.txt
+./install.sh
+```
+
+### Aktualizacja istniejącego skilla
+
+Edytuj plik bezpośrednio w `skills/<nazwa>/SKILL.md`.
+Symlink sprawia że OpenCode widzi zmiany natychmiast — bez reinstalacji.
+
+### Eksport zainstalowanych skilli do listy
+
+```bash
+ls ~/.config/opencode/skills/ > external-skills.txt
+```

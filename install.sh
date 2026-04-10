@@ -30,8 +30,8 @@ for agent_file in "$DOTFILES/agents"/*.md; do
 done
 
 # ── globalny AGENTS.md ──
-if [ -f "$DOTFILES/AGENTS.md" ]; then
-  ln -sf "$DOTFILES/AGENTS.md" "$OPENCODE_DIR/AGENTS.md"
+if [ -f "$DOTFILES/config/opencode/AGENTS.md" ]; then
+  ln -sf "$DOTFILES/config/opencode/AGENTS.md" "$OPENCODE_DIR/AGENTS.md"
   echo "→ AGENTS.md zlinkowany"
 fi
 
