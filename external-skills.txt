@@ -1,0 +1,9 @@
+# Zewnętrzne skille instalowane przez npx skills add
+# Jedna nazwa per linia. Komentarze przez #.
+# Aktualizacja: ./install.sh (reinstaluje wszystkie)
+
+# playwright — automatyzacja przeglądarki, E2E testy
+# playwright
+
+# git-master — atomic commits, rebase strategies
+# git-master
