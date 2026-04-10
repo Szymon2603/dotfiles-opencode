@@ -1,7 +1,7 @@
 ---
 description: Code reviewer — sprawdza edge cases i AC przed commitem
 mode: subagent
-model: claude-haiku-4-5
+model: opencode/claude-haiku-4-5
 temperature: 0.1
 tools:
   write: false

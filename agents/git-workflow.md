@@ -1,7 +1,7 @@
 ---
 description: Git commit and PR workflow agent — stages changes, writes conventional commits, opens PRs. Load mine-git-conventions or mine-project-workflow as needed.
 mode: subagent
-model: claude-haiku-4-5
+model: opencode/claude-haiku-4-5
 temperature: 0.1
 permission:
   bash:
