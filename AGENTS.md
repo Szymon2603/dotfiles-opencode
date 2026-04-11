@@ -10,7 +10,7 @@ Zawiera skille, agentów i globalne preferencje stosowane do każdej sesji.
 ### Filozofia tego repo
 
 To repo istnieje żeby setup OpenCode był odtwarzalny na każdej maszynie
-przez jedno polecenie (`./install.sh`). Zmiany tu mają efekt globalny —
+przez jedno polecenie (`./bootstrap.sh`). Zmiany tu mają efekt globalny —
 dotyczą każdej sesji w każdym projekcie.
 
 ### Podział: globalne vs per-projekt
@@ -137,19 +137,42 @@ Ostrzegaj aktywnie (etykieta `⚠ SECURITY:`) gdy widzisz:
 
 ## Jak rozwijać to repo
 
+### Jednorazowy setup nowej maszyny
+
+```bash
+./bootstrap.sh
+```
+
+Linkuje skille/agentów globalnie, instaluje zewnętrzne skille z `profiles/external-skills.txt`,
+rejestruje `opencode-install` jako globalną komendę w `~/.local/bin`.
+
+### Instalacja skilla lub agenta per projekt
+
+Z katalogu projektu:
+```bash
+opencode-install                         # czyta .opencode/requirements.txt
+opencode-install skill playwright        # pyta o zakres
+opencode-install skill playwright --local
+opencode-install agent reviewer --local
+opencode-install agent ./my-agent.md --local
+```
+
 ### Dodanie nowego własnego skilla
 
 ```bash
 mkdir skills/mine-nowy-skill
 # napisz skills/mine-nowy-skill/SKILL.md z frontmatter name + description
-./install.sh  # zlinkuje nowy skill
+# dodaj wpis do profiles/global.txt:
+echo "skill:mine-nowy-skill" >> profiles/global.txt
+./bootstrap.sh  # zlinkuje nowy skill globalnie
 ```
 
-### Dodanie zewnętrznego skilla
+### Dodanie zewnętrznego skilla do globalnego bootstrapu
 
 ```bash
-echo "nazwa-skilla" >> external-skills.txt
-./install.sh
+# odkomentuj lub dodaj linię w profiles/external-skills.txt
+echo "nazwa-skilla" >> profiles/external-skills.txt
+./bootstrap.sh
 ```
 
 ### Aktualizacja istniejącego skilla
@@ -157,8 +180,33 @@ echo "nazwa-skilla" >> external-skills.txt
 Edytuj plik bezpośrednio w `skills/<nazwa>/SKILL.md`.
 Symlink sprawia że OpenCode widzi zmiany natychmiast — bez reinstalacji.
 
-### Eksport zainstalowanych skilli do listy
+### Struktura plików
 
-```bash
-ls ~/.config/opencode/skills/ > external-skills.txt
 ```
+bootstrap.sh                  # jednorazowy setup maszyny
+opencode-install.sh           # główny CLI — per-projekt i globalne instalacje
+setup.sh                      # rejestruje opencode-install w ~/.local/bin
+profiles/
+  global.txt                  # własne skille/agenci z dotfiles (instalowane globalnie)
+  external-skills.txt         # zewnętrzne skille przez npx skills add (globalnie)
+skills/                       # własne skille (mine-*)
+agents/                       # własni agenci
+config/opencode/AGENTS.md     # globalny AGENTS.md
+```
+
+### requirements.txt w projekcie
+
+Utwórz `.opencode/requirements.txt` w projekcie:
+```
+# Własne skille z dotfiles (symlink z globalnego)
+skill:mine-git-conventions
+
+# Zewnętrzne
+skill:playwright
+
+# Agenci
+agent:reviewer
+agent:./agents/my-project-agent.md
+```
+
+Uruchom `opencode-install` z katalogu projektu żeby zainstalować wszystko lokalnie.

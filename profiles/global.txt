@@ -1,0 +1,10 @@
+# Własne skille i agenci z dotfiles — instalowane globalnie przez bootstrap.sh
+# Format: skill:<nazwa> lub agent:<nazwa>
+# Nazwa musi odpowiadać katalogowi w skills/ lub plikowi w agents/ (bez .md)
+
+skill:mine-git-conventions
+skill:mine-knowledge-session
+skill:mine-project-workflow
+
+agent:reviewer
+agent:git-workflow

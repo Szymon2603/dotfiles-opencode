@@ -1,6 +1,6 @@
-# Zewnętrzne skille instalowane przez npx skills add
+# Zewnętrzne skille instalowane przez: npx skills add <nazwa> --yes --global
 # Jedna nazwa per linia. Komentarze przez #.
-# Aktualizacja: ./install.sh (reinstaluje wszystkie)
+# Uruchamiane przez bootstrap.sh
 
 # playwright — automatyzacja przeglądarki, E2E testy
 # playwright
