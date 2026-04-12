@@ -41,10 +41,14 @@ do tej decyzji gdy projekt flight-tracker urośnie do 10+ równoległych zadań.
 
 ### Agenci w tym repo
 
-Wszystkie 4 agenty są subagentami (nie primary). Wywołuje się je przez `@nazwa`.
+Wszystkie agenty są subagentami (nie primary). Wywołuje się je przez `@nazwa`.
 
 `reviewer` — model haiku (tani), temperature 0.1 (deterministyczny), write: false.
 Celowo tani bo code review nie wymaga frontier model — wymaga dokładności.
+
+`git-workflow` — model haiku, temperature 0.1. Obsługuje git i GitHub: staging,
+commity wg Conventional Commits, branche, PR. Ładuje skille mine-git-conventions
+lub mine-project-workflow dynamicznie. Pyta przed push i gh pr create.
 
 `knowledge-collector` — model haiku, temperature 0.2. Najważniejsza zasada:
 tylko ekstrakcja faktów, zero interpretacji. Niska temperatura = nie wymyśla.
